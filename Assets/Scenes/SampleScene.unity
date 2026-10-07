@@ -3174,7 +3174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JohnMovement
   Speed: 5
-  JumpForce: 7
+  JumpForce: 5
   BulletPrefab: {fileID: 4523314327015284834, guid: 6713f4472b861b54682c08384d7f9a8f, type: 3}
   FirePoint: {fileID: 1441549528}
 --- !u!1 &1441549527
