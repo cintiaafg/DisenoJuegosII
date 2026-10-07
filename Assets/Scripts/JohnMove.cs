@@ -3,7 +3,7 @@ using UnityEngine;
 public class JohnMovement : MonoBehaviour
 {
     public float Speed = 5f;
-    public float JumpForce = 7f;
+    public float JumpForce = 5f;
 
     [Header("Disparo")]
     public GameObject BulletPrefab;
