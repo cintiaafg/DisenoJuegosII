@@ -21,4 +21,5 @@ public class BulletScript : MonoBehaviour
     {
         rb.linearVelocity = direction * speed;
     }
+    
 }
