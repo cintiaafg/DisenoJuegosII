@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class JohnMovement : MonoBehaviour
 {
-    public float Speed = 5f;
+    public float Speed = 8f;
     public float JumpForce = 5f;
 
     [Header("Disparo")]
     public GameObject BulletPrefab;
     public Transform FirePoint;
+    public Animator Animator;
 
     private Rigidbody2D rb;
     private float horizontal;
@@ -17,11 +18,28 @@ public class JohnMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        Animator = GetComponent<Animator>();
+
+        if (Animator != null)
+        {
+            Animator.speed = 1.5f;
+        }
     }
 
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
+
+        if (Animator != null)
+        {
+            Animator.SetBool("running", horizontal != 0f);
+        }
+
+        Grounded = Physics2D.Raycast(
+            transform.position,
+            Vector2.down,
+            0.1f
+        );
 
         Debug.DrawRay(
             transform.position,
@@ -29,37 +47,22 @@ public class JohnMovement : MonoBehaviour
             Color.red
         );
 
-        if (Physics2D.Raycast(
-            transform.position,
-            Vector2.down,
-            0.1f))
-        {
-            Grounded = true;
-        }
-        else
-        {
-            Grounded = false;
-        }
-
-        // Saltar
         if (Input.GetKeyDown(KeyCode.W) && Grounded)
         {
             Jump();
         }
 
-        // Dirección de John
-        if (horizontal > 0)
+        if (horizontal > 0 && !facingRight)
         {
             facingRight = true;
             Flip();
         }
-        else if (horizontal < 0)
+        else if (horizontal < 0 && facingRight)
         {
             facingRight = false;
             Flip();
         }
 
-        // Disparar
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Shoot();
@@ -84,6 +87,12 @@ public class JohnMovement : MonoBehaviour
 
     private void Shoot()
     {
+        if (BulletPrefab == null || FirePoint == null)
+        {
+            Debug.LogWarning("Asigna BulletPrefab y FirePoint.");
+            return;
+        }
+
         GameObject bullet = Instantiate(
             BulletPrefab,
             FirePoint.position,
@@ -93,13 +102,11 @@ public class JohnMovement : MonoBehaviour
         BulletScript bulletScript =
             bullet.GetComponent<BulletScript>();
 
-        if (facingRight)
+        if (bulletScript != null)
         {
-            bulletScript.SetDirection(Vector2.right);
-        }
-        else
-        {
-            bulletScript.SetDirection(Vector2.left);
+            bulletScript.SetDirection(
+                facingRight ? Vector2.right : Vector2.left
+            );
         }
     }
 
@@ -107,14 +114,9 @@ public class JohnMovement : MonoBehaviour
     {
         Vector3 scale = transform.localScale;
 
-        if (facingRight)
-        {
-            scale.x = Mathf.Abs(scale.x);
-        }
-        else
-        {
-            scale.x = -Mathf.Abs(scale.x);
-        }
+        scale.x = facingRight
+            ? Mathf.Abs(scale.x)
+            : -Mathf.Abs(scale.x);
 
         transform.localScale = scale;
     }

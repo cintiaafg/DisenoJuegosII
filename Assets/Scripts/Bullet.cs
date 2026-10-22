@@ -3,13 +3,19 @@ using UnityEngine;
 public class BulletScript : MonoBehaviour
 {
     public float speed = 10f;
+    public float lifeTime = 3f;
 
     private Rigidbody2D rb;
-    private Vector2 direction;
+    private Vector2 direction = Vector2.right;
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        Destroy(gameObject, lifeTime);
     }
 
     public void SetDirection(Vector2 newDirection)
@@ -21,5 +27,4 @@ public class BulletScript : MonoBehaviour
     {
         rb.linearVelocity = direction * speed;
     }
-    
 }
